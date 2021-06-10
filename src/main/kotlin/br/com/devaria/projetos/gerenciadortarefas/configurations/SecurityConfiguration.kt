@@ -4,12 +4,16 @@ import br.com.devaria.projetos.gerenciadortarefas.filters.JWTAutorizadorFilter
 import br.com.devaria.projetos.gerenciadortarefas.repositories.UsuarioRepository
 import br.com.devaria.projetos.gerenciadortarefas.utils.JWTUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +31,21 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/api/usuario").permitAll()
             .anyRequest().authenticated()
 
+        http.cors().configurationSource(configuracaoCors())
         http.addFilter(JWTAutorizadorFilter(authenticationManager(), jwtUtils, usuarioRepository))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    }
+
+    @Bean
+    fun configuracaoCors() : CorsConfigurationSource? {
+        val configuracao = CorsConfiguration()
+
+        configuracao.allowedOrigins = mutableListOf("*")
+        configuracao.allowedMethods = mutableListOf("*")
+        configuracao.allowedHeaders = mutableListOf("*")
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuracao)
+        return source
     }
 }
