@@ -1,7 +1,12 @@
 package br.com.devaria.projetos.gerenciadortarefas.models
 
+import javax.persistence.Entity
+import javax.persistence.*
+
+@Entity
 data class Usuario (
-    val id: Long,
-    val nome: String,
-    val email: String,
-    val senha: String)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+    val nome: String = "",
+    val email: String = "",
+    val senha: String = "")
